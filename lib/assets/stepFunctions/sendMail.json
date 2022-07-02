@@ -1,0 +1,51 @@
+{
+  "Comment": "mail form backend",
+  "StartAt": "SendInquiry",
+  "States": {
+    "SendInquiry": {
+      "Type": "Task",
+      "Parameters": {
+        "Source": "#dummy#",
+        "Destination": {
+          "ToAddresses": [
+            "#dummy#"
+          ]
+        },
+        "Message": {
+          "Subject": {
+            "Data": "お問い合わせありがとうございます"
+          },
+          "Body": {
+            "Text": {
+              "Data.$": "States.Format('氏名: {}\nお問い合わせ内容: {}', $.inquirerName, $.inquiryMessage)"
+            }
+          }
+        }
+      },
+      "Resource": "arn:aws:states:::aws-sdk:ses:sendEmail",
+      "ResultPath": "$.result",
+      "Next": "SendCopy"
+    },
+    "SendCopy": {
+      "Type": "Task",
+      "Parameters": {
+        "Source": "#dummy#",
+        "Destination": {
+          "ToAddresses.$": "States.Array($.inquirerAddress)"
+        },
+        "Message": {
+          "Subject": {
+            "Data.$": "States.Format('{} さんからのお問い合わせ', $.inquirerName)"
+          },
+          "Body": {
+            "Text": {
+              "Data.$": "$.inquiryMessage"
+            }
+          }
+        }
+      },
+      "Resource": "arn:aws:states:::aws-sdk:ses:sendEmail",
+      "End": true
+    }
+  }
+}
