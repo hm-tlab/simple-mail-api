@@ -15,7 +15,6 @@ export interface StapFunctionsStackProps extends StackProps {
 }
 
 export class StepFunctionsStack extends Stack {
-  // stateMachine: CfnStateMachine;
   constructor(scope: Construct, id: string, props: StapFunctionsStackProps) {
     super(scope, id, props);
     var definition = require(props.definitionSrcPath);
@@ -48,7 +47,7 @@ export class StepFunctionsStack extends Stack {
       roleArn: executionRole.roleArn,
       definition
     });
-    new CfnOutput(this, 'abced', {
+    new CfnOutput(this, 'stateMachineArn', {
       exportName: 'stateMachineArn',
       value: stateMachine.attrArn
     });
