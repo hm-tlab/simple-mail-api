@@ -4,6 +4,7 @@ import {
   Stack,
   StackProps,
   aws_iam as iam,
+  CfnOutput,
 } from 'aws-cdk-lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
@@ -14,7 +15,7 @@ export interface StapFunctionsStackProps extends StackProps {
 }
 
 export class StepFunctionsStack extends Stack {
-  stateMachine: CfnStateMachine;
+  // stateMachine: CfnStateMachine;
   constructor(scope: Construct, id: string, props: StapFunctionsStackProps) {
     super(scope, id, props);
     var definition = require(props.definitionSrcPath);
@@ -42,10 +43,14 @@ export class StepFunctionsStack extends Stack {
     definition["States"]["SendInquiry"]["Parameters"]["Destination"]["ToAddresses"] = [srcAddress];
     definition["States"]["SendCopy"]["Parameters"]["Source"] = srcAddress;
 
-    this.stateMachine = new CfnStateMachine(this, 'sendMail', {
+    const stateMachine = new CfnStateMachine(this, 'sendMail', {
       stateMachineName: 'sendMail',
       roleArn: executionRole.roleArn,
       definition
+    });
+    new CfnOutput(this, 'abced', {
+      exportName: 'stateMachineArn',
+      value: stateMachine.attrArn
     });
   }
 }

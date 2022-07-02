@@ -3,7 +3,8 @@ import {
   Stack,
   StackProps,
   aws_iam as iam,
-  aws_apigateway as apigw
+  aws_apigateway as apigw,
+  CfnOutput
 } from 'aws-cdk-lib';
 
 export interface ApiGatewayStackProps extends StackProps {

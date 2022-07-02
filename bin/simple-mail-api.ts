@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import {
-  App, Environment
+  App, Environment, Fn
 } from 'aws-cdk-lib';
 import { ApiGatewayStack } from '../lib/api-gateway';
 import { StepFunctionsStack } from '../lib/step-functions';
@@ -18,7 +18,9 @@ const stepFunctionsStack = new StepFunctionsStack(app, 'StepFunctionsStack', {
   definitionSrcPath: './assets/stepFunctions/sendMail.json'
 });
 
-new ApiGatewayStack(app, 'ApiGatewayStack', {
+const apiGatewayStack = new ApiGatewayStack(app, 'ApiGatewayStack', {
   env,
-  stateMachineArn: stepFunctionsStack.stateMachine.attrArn
+  stateMachineArn: Fn.importValue('stateMachineArn') //stepFunctionsStack.stateMachine.attrArn
 });
+
+apiGatewayStack.addDependency(stepFunctionsStack)
